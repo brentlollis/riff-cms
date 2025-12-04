@@ -96,16 +96,17 @@ gallery_images → Images in galleries (gallery_id, media_id, order, caption)
    - Page editor with Tiptap
    - Media library uploader
    - Gallery manager
-5. Set up GitHub repo: `git@github.com:brentlollis/riff-cms.git`
-6. Deploy to server at port 4000
-7. Test API integration with flash-painting
+5. Deploy to server at port 4000
+6. Test API integration with flash-painting
 
 ---
 
 ## GitHub
 
-**Planned Repo:** git@github.com:brentlollis/riff-cms.git (private)
-**Status:** Not yet initialized
+**Repo:** https://github.com/brentlollis/riff-cms (private)
+**Remote URL:** https://brentlollis@github.com/brentlollis/riff-cms.git
+**Status:** ✅ Initialized and pushed
+**Note:** Uses HTTPS with username in URL (for multi-account credential separation)
 
 ---
 
