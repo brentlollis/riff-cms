@@ -1,161 +1,162 @@
 # riff-cms - Session Handoff
 
 **Last Updated:** December 4, 2025
-**Session:** 1
-**Status:** 🟡 Foundation Complete - Awaiting Supabase Credentials
+**Status:** 🟡 Functional but incomplete integration
 
 ---
 
-## Current State
+## Quick Status
 
-Project initialized with Next.js 16, TypeScript, Tailwind, Supabase client, and Tiptap editor. Basic authentication flow and admin dashboard structure created. API routes defined for client site integration.
+### What's Working ✅
+- riff-cms deployed on port 4000 (http://34.29.234.193:4000)
+- Database schema complete (sites, profiles, pages, media, galleries, gallery_images)
+- Admin interface functional (Sites, Pages, Media, Galleries)
+- Flash Painting site record created in database
+- flash-painting fetching from CMS API (but no content created yet)
+- Super admin user: brent@creativestate.com / R!FF7177
 
-### What Exists
-- Next.js 16 + TypeScript + Tailwind project
-- Supabase client utilities (browser & server-side)
-- Tiptap WYSIWYG editor packages installed
-- Login page (`/auth/login`)
-- Admin dashboard (`/admin`) with quick links
-- API routes for sites and pages
-- Type definitions for database schema
-- Environment variable template (`.env.local.example`)
-
-### What's Working
-- Project builds successfully
-- Folder structure matches planned architecture
-- Auth flow redirects (root → login or admin based on session)
-- API routes ready to connect to Supabase once configured
+### What's Not Working ❌
+- No actual content pages created in CMS yet
+- flash-painting components not updated to handle `data` props
+- Homepage will render empty/undefined until content is created
 
 ---
 
-## Files Created This Session
+## Current Architecture
 
+### Multi-Tenant CMS Flow
 ```
-riff-cms/
-├── Documentation/
-│   ├── BUILD_PROGRESS.md
-│   └── SESSION_HANDOFF.md
-├── app/
-│   ├── admin/page.tsx
-│   ├── api/sites/[slug]/
-│   │   ├── route.ts
-│   │   └── pages/route.ts
-│   ├── auth/login/page.tsx
-│   └── page.tsx
-├── lib/supabase/
-│   ├── client.ts
-│   └── server.ts
-├── types/database.ts
-└── .env.local.example
+riff-cms (port 4000)
+  ↓ API
+flash-painting → fetches content → http://34.29.234.193:4000/api/sites/flashpainting.com/pages
+  ↓
+page.tsx → getPageBySlug('home') → passes content.hero, content.tagline, etc to components
 ```
 
----
+### Key Files
 
-## Technology Stack
+**CMS API Routes:**
+- `/api/sites/[slug]/route.ts` - Fetch site by domain
+- `/api/sites/[slug]/pages/route.ts` - Fetch published pages for site
 
-| Component | Technology |
-|-----------|------------|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Database | Supabase (PostgreSQL) |
-| Auth | Supabase Auth |
-| Storage | Supabase Storage |
-| Editor | Tiptap |
-| Deployment | PM2 on port 4000 |
+**Flash Painting Integration:**
+- [flash-painting/src/lib/cms.ts](../../flash-painting/src/lib/cms.ts) - API client
+- [flash-painting/src/app/page.tsx](../../flash-painting/src/app/page.tsx#L11) - Fetches home page content
+- [flash-painting/.env.local](../../flash-painting/.env.local#L2) - CMS_API_URL configuration
 
 ---
 
-## Database Schema (Planned)
+## Immediate Next Steps
 
-```
-sites         → Client website configs (name, domain, settings JSON)
-users         → User accounts with roles (super_admin, site_admin, client_editor)
-pages         → Page content with JSON blocks (site_id, slug, title, content, published)
-media         → File metadata (site_id, filename, storage_path, alt_text)
-galleries     → Photo collections (site_id, name)
-gallery_images → Images in galleries (gallery_id, media_id, order, caption)
-```
+1. **Create Content in CMS**
+   - Log in to http://34.29.234.193:4000/auth/login
+   - Navigate to Pages → Create New Page
+   - Slug: `home`
+   - Site: Flash Painting & Remodeling
+   - Content structure needed:
+   ```json
+   {
+     "hero": { "title": "...", "subtitle": "...", "cta": "..." },
+     "tagline": { "text": "..." },
+     "process": { "steps": [...] },
+     "services": { "items": [...] },
+     "gallery": { "images": [...] },
+     "testimonials": { "items": [...] }
+   }
+   ```
+
+2. **Update flash-painting Components**
+   - Modify Hero.tsx, Tagline.tsx, etc to accept optional `data` prop
+   - Provide fallback values when data is undefined
+   - Example:
+   ```typescript
+   export default function Hero({ data }: { data?: any }) {
+     const title = data?.title || "Flash Painting & Remodeling";
+     // ...
+   }
+   ```
+
+3. **Test Integration**
+   - Create content in CMS
+   - Verify flash-painting displays content
+   - Check revalidation (60s cache)
 
 ---
 
-## Blockers / Next Steps
+## Database
 
-### Immediate Next Step
-**Provide Supabase credentials** to create `.env.local`:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY` (optional, for admin operations)
+**Supabase Project:** dtuzljwxuqqlehkrcvnj
+**Tables:** sites, profiles, pages, media, galleries, gallery_images
+**RLS:** Enabled with role-based policies (super_admin, site_admin, client_editor)
+**Storage:** `media` bucket (public, 50MB limit, images only)
 
-### After Credentials
-1. Create `.env.local` file
-2. Create Supabase database tables (migrations)
-3. Set up Row Level Security policies
-4. Build admin pages:
-   - Sites manager
-   - Page editor with Tiptap
-   - Media library uploader
-   - Gallery manager
-5. Deploy to server at port 4000
-6. Test API integration with flash-painting
-
----
-
-## GitHub
-
-**Repo:** https://github.com/brentlollis/riff-cms (private)
-**Remote URL:** https://brentlollis@github.com/brentlollis/riff-cms.git
-**Status:** ✅ Initialized and pushed
-**Note:** Uses HTTPS with username in URL (for multi-account credential separation)
+**Sites in Database:**
+- Flash Painting & Remodeling (domain: flashpainting.com, ID: 1b28e803-743e-4ca1-8860-34b307068181)
 
 ---
 
 ## Deployment
 
-**Development Access:** http://34.29.234.193:4000 (planned, port not yet verified)
-**Production Access:** (Pending Nginx configuration)
+**Server:** tools.pipelineequipment.com
+**Location:** /var/www/riff-cms
+**Port:** 4000
+**PM2:** Process ID 23 (riff-cms)
+**GitHub:** git@github.com:brentlollis/riff-cms.git
 
-### Deploy Command (Future)
+**Deploy Command:**
 ```powershell
-# Production
-ssh brent@tools.pipelineequipment.com 'cd /var/www/riff-cms ; git pull ; npm install ; pm2 restart riff-cms'
-
-# Staging
-ssh brent@tools.pipelineequipment.com 'cd /var/www/riff-cms-staging ; git pull ; npm install ; pm2 restart riff-cms-staging'
-```
-
-**Note:** Must verify port 4000 is available before deployment.
-
----
-
-## Commands
-
-```powershell
-# Run dev server (after .env.local created)
-cd riff-cms ; npm run dev
-
-# Stop dev server
-Get-Process -Name "node" | Stop-Process -Force
-
-# Push to GitHub (after repo initialized)
-cd riff-cms ; git add . ; git commit -m "message" ; git push
+ssh brent@tools.pipelineequipment.com 'cd /var/www/riff-cms ; git pull ; npm install ; npm run build ; pm2 restart riff-cms'
 ```
 
 ---
 
-## Context for Next AI Session
+## Known Issues
 
-riff-cms project foundation is complete. Next.js app is initialized with:
-- Authentication pages (login redirects to admin dashboard)
-- Admin dashboard with navigation placeholders
-- API routes for client sites to fetch content
-- Supabase client utilities ready to use
-- Tiptap editor packages installed
+1. **Components Not CMS-Ready**
+   - flash-painting components expect hardcoded data
+   - Need to update all 6 components (Hero, Tagline, Process, Services, Gallery, Testimonials)
+   - Need fallback values for when CMS returns null
 
-**Critical blocker:** Need Supabase credentials to proceed with database setup and testing.
+2. **No Content Created**
+   - Database has site record but no pages
+   - Homepage will fail to render meaningful content until "home" page is created
 
-**Architecture reminder:** riff-cms will be a multi-tenant CMS that controls flash-painting and future client sites. Each client site makes API calls to riff-cms to fetch content (pages, galleries, media). Admin users manage content through the dashboard.
-
-**User roles:** Super Admin (all sites), Site Admin (assigned sites), Client Editor (content only for their site).
+3. **Tiptap Table Support Removed**
+   - Table extensions caused build errors
+   - Editor only supports: StarterKit, Image, Link
+   - May need alternative for table content
 
 ---
+
+## Technical Decisions Made
+
+| Decision | Reason |
+|----------|--------|
+| Async params format | Next.js 16 requirement |
+| ON CONFLICT DO NOTHING in trigger | Prevents duplicate profile errors |
+| Table extensions removed | Build errors with @tiptap/extension-table |
+| 60s revalidation | Balance between freshness and performance |
+| Port 4000 | Creative State range (4000-4999) |
+
+---
+
+## Reference Commands
+
+**Check CMS Status:**
+```powershell
+ssh brent@tools.pipelineequipment.com 'pm2 status riff-cms'
+```
+
+**View Logs:**
+```powershell
+ssh brent@tools.pipelineequipment.com 'pm2 logs riff-cms --lines 50'
+```
+
+**Restart After Changes:**
+```powershell
+ssh brent@tools.pipelineequipment.com 'cd /var/www/riff-cms ; git pull ; npm run build ; pm2 restart riff-cms'
+```
+
+---
+
+**For full chronological history, see [BUILD_PROGRESS.md](BUILD_PROGRESS.md)**
