@@ -47,7 +47,7 @@ try {
     Write-Host "✅ Profile updated to super_admin" -ForegroundColor Green
     Write-Host "`n🎉 Super admin user created successfully!" -ForegroundColor Green
     Write-Host "   Email: brent@creativestate.com"
-    Write-Host "   Login at: http://34.29.234.193:4000"
+    Write-Host "   Login at: http://136.112.124.54:4000"
 
 } catch {
     Write-Host "❌ Error: $($_.Exception.Message)" -ForegroundColor Red

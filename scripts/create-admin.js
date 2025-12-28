@@ -47,7 +47,7 @@ async function createAdminUser() {
   console.log('✅ Profile updated to super_admin')
   console.log('\n🎉 Super admin user created successfully!')
   console.log('   Email: brent@creativestate.com')
-  console.log('   Login at: http://34.29.234.193:4000')
+  console.log('   Login at: http://136.112.124.54:4000')
 }
 
 createAdminUser().catch(console.error)

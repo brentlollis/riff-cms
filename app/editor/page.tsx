@@ -9,7 +9,7 @@ export default function EditorPage() {
     // Use env var or fallback to the server IP (which works for both local and remote if on VPN/same network, but strictly for server deploy we want the IP)
     // For local dev, localhost:4002 is fine. For server, we need the IP.
     // Ideally this is in .env.local
-    const TARGET_SITE_URL = process.env.NEXT_PUBLIC_TARGET_SITE_URL || 'http://34.29.234.193:4002'
+    const TARGET_SITE_URL = process.env.NEXT_PUBLIC_TARGET_SITE_URL || 'http://136.112.124.54:4002'
     const frameRef = React.useRef<any>(null)
 
     // Selection State
